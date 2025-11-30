@@ -1,0 +1,60 @@
+package dev.lysmux.web4.api.resource;
+
+import dev.lysmux.web4.api.filter.Secured;
+import dev.lysmux.web4.api.schema.APIResponse;
+import dev.lysmux.web4.api.schema.HitCheckRequest;
+import dev.lysmux.web4.auth.UserPrincipal;
+import dev.lysmux.web4.domain.model.Hit;
+import dev.lysmux.web4.service.HitService;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+
+import java.util.List;
+
+@Path("/hits")
+@Secured
+public class HitResource {
+    @Inject
+    HitService hitService;
+
+    @Inject
+    UserPrincipal user;
+
+    @GET
+    @Path("/list")
+    public APIResponse getUserHits() {
+        List<Hit> hits = hitService.getUserHits(user.getId());
+
+        return APIResponse.builder()
+                .data(hits)
+                .build();
+    }
+
+    @POST
+    @Path("/check")
+    public APIResponse checkHit(@Valid HitCheckRequest request) {
+        Hit hit = hitService.checkHit(
+                user.getId(),
+                request.x(),
+                request.y(),
+                request.r()
+        );
+
+        return APIResponse.builder()
+                .data(hit)
+                .build();
+    }
+
+    @POST
+    @Path("/clear")
+    public APIResponse clearHits() {
+        hitService.clearUserHits(user.getId());
+
+        return APIResponse.builder()
+                .data("Hits cleared")
+                .build();
+    }
+}

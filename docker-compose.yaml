@@ -1,0 +1,46 @@
+services:
+  database:
+    container_name: postgres
+    image: postgres:17
+    ports:
+      - "5432:5432"
+
+    env_file:
+      - .env
+
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+
+    networks:
+      - storage
+    volumes:
+      - ./docker-data/pg:/var/lib/postgresql/data
+
+  liquibase:
+    container_name: liquibase
+    image: liquibase/liquibase:4.31
+
+    depends_on:
+      database:
+        condition: service_started
+
+    env_file:
+      - .env
+
+    networks:
+      - storage
+
+    volumes:
+      - ./migrations:/liquibase/migrations
+
+    command:
+      - --changeLogFile=migrations/master.xml
+      - --url=jdbc:postgresql://database:5432/${PG_DB}
+      - --username=${PG_USER}
+      - --password=${PG_PASSWORD}
+      - update
+
+networks:
+  storage:

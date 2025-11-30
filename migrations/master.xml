@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <include file="changelog/001-init/001-create-updated-at-func.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/001-init/002-create-users-table.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/001-init/003-create-hits-table.xml" relativeToChangelogFile="true"/>
+
+    <include file="changelog/002-auth/001-create-password-credentials-table.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/002-auth/002-create-vk-credentials-table.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/002-auth/004-create-refresh-tokens-table.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>
