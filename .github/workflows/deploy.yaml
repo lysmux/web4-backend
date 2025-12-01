@@ -1,0 +1,81 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment
+        required: true
+        default: prod
+        type: string
+      tag:
+        description: Tag
+        required: true
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment
+        required: true
+        default: prod
+        type: environment
+      tag:
+        description: Tag
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'latest'
+
+      - name: Create kubeconfig from secrets
+        env:
+          K8S_TOKEN: ${{ secrets.K8S_TOKEN }}
+          K8S_CA_CERT: ${{ secrets.K8S_CA_CERT }}
+          K8S_SERVER: ${{ secrets.K8S_SERVER }}
+        run:  |
+          cat > kubeconfig.yaml <<EOF
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - name: production-cluster
+            cluster:
+              certificate-authority-data: $K8S_CA_CERT
+              server: $K8S_SERVER
+          contexts:
+          - name: production-context
+            context:
+              cluster: production-cluster
+              namespace: default
+              user: github-actions
+          current-context: production-context
+          users:
+          - name: github-actions
+            user:
+              token: $K8S_TOKEN
+          EOF
+
+          export KUBECONFIG=kubeconfig.yaml
+
+          kubectl cluster-info
+
+      - name: Deploy
+        run: |
+          helm upgrade --install \
+            web4-backend ./helm \
+            --kubeconfig kubeconfig.yaml \
+            --set version=${{ inputs.tag }} \
+            --set config.database.password=${{ secrets.PG_PASSWORD }} \
+            --set config.mail.password=${{ secrets.MAIL_PASSWORD }} \
+            --atomic \
+            --wait \
+            --timeout 5m

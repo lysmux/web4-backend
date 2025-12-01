@@ -1,0 +1,26 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "helm.fullname" . }}
+  labels:
+    {{ include "helm.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`web4.lysmux.dev`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: {{ include "helm.fullname" . }}
+          port: 8080
+      middlewares:
+        - name: strip-api-prefix
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-api-prefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /api

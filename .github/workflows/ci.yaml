@@ -42,9 +42,17 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      SHORT_SHA: ${{ steps.get_short_sha.outputs.SHORT_SHA }}
 
     steps:
       - uses: actions/checkout@v6
+
+      - name: Get short commit sha
+        id: get_short_sha
+        run: |
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
 
       - name: Download build
         uses: actions/download-artifact@v5
@@ -138,3 +146,14 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - build-docker
+      - build-migrations
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      environment: "prod"
+      tag: "sha-${{ needs.build-docker.outputs.SHORT_SHA }}"
+    secrets: inherit
