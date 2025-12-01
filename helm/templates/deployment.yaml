@@ -9,6 +9,10 @@ spec:
   selector:
     matchLabels:
       {{ include "helm.selectorLabels" . | nindent 6 }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       {{- with .Values.podAnnotations }}
