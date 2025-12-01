@@ -5,13 +5,10 @@ services:
     ports:
       - "5432:5432"
 
-    env_file:
-      - .env
-
     environment:
-      POSTGRES_USER: ${PG_USER}
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: web4
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: web4
 
     networks:
       - storage
@@ -20,27 +17,20 @@ services:
 
   liquibase:
     container_name: liquibase
-    image: liquibase/liquibase:4.31
+    build:
+      context: .
+      dockerfile: migrations/Dockerfile
 
     depends_on:
-      database:
-        condition: service_started
+      - database
 
-    env_file:
-      - .env
+    environment:
+      LIQUIBASE_URL: "jdbc:postgresql://database:5432/web4"
+      LIQUIBASE_USERNAME: web4
+      LIQUIBASE_PASSWORD: password
 
     networks:
       - storage
-
-    volumes:
-      - ./migrations:/liquibase/migrations
-
-    command:
-      - --changeLogFile=migrations/master.xml
-      - --url=jdbc:postgresql://database:5432/${PG_DB}
-      - --username=${PG_USER}
-      - --password=${PG_PASSWORD}
-      - update
 
 networks:
   storage:
