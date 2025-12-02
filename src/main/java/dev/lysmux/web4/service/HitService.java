@@ -3,6 +3,8 @@ package dev.lysmux.web4.service;
 import dev.lysmux.web4.domain.model.Hit;
 import dev.lysmux.web4.domain.checker.HitChecker;
 import dev.lysmux.web4.domain.repository.HitRepository;
+import dev.lysmux.web4.dto.hit.HitDto;
+import dev.lysmux.web4.dto.hit.HitMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -23,8 +25,11 @@ public class HitService {
     @Inject
     HitRepository repository;
 
+    @Inject
+    HitMapper mapper;
+
     @Transactional
-    public Hit checkHit(UUID userId, double x, double y, double r) {
+    public HitDto checkHit(UUID userId, double x, double y, double r) {
         long startTime = System.nanoTime();
 
         boolean hit = checkers.stream()
@@ -39,11 +44,13 @@ public class HitService {
                 .build();
         repository.addHit(result);
 
-        return result;
+        return mapper.toDto(result);
     }
 
-    public List<Hit> getUserHits(UUID userId) {
-        return repository.getUserHits(userId);
+    public List<HitDto> getUserHits(UUID userId) {
+        return repository.getUserHits(userId).stream()
+                .map(mapper::toDto)
+                .toList();
     }
 
     @Transactional

@@ -4,7 +4,7 @@ import dev.lysmux.web4.api.filter.Secured;
 import dev.lysmux.web4.api.schema.APIResponse;
 import dev.lysmux.web4.api.schema.HitCheckRequest;
 import dev.lysmux.web4.auth.UserPrincipal;
-import dev.lysmux.web4.domain.model.Hit;
+import dev.lysmux.web4.dto.hit.HitDto;
 import dev.lysmux.web4.service.HitService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class HitResource {
     @GET
     @Path("/list")
     public APIResponse getUserHits() {
-        List<Hit> hits = hitService.getUserHits(user.getId());
+        List<HitDto> hits = hitService.getUserHits(user.getId());
 
         return APIResponse.builder()
                 .data(hits)
@@ -36,7 +36,7 @@ public class HitResource {
     @POST
     @Path("/check")
     public APIResponse checkHit(@Valid HitCheckRequest request) {
-        Hit hit = hitService.checkHit(
+        HitDto hit = hitService.checkHit(
                 user.getId(),
                 request.x(),
                 request.y(),
