@@ -3,6 +3,7 @@ package dev.lysmux.web4.service;
 import dev.lysmux.web4.domain.model.Hit;
 import dev.lysmux.web4.domain.checker.HitChecker;
 import dev.lysmux.web4.domain.repository.HitRepository;
+import dev.lysmux.web4.dto.PaginationDto;
 import dev.lysmux.web4.dto.hit.HitDto;
 import dev.lysmux.web4.dto.hit.HitMapper;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -47,10 +48,14 @@ public class HitService {
         return mapper.toDto(result);
     }
 
-    public List<HitDto> getUserHits(UUID userId) {
-        return repository.getUserHits(userId).stream()
+    public PaginationDto<List<HitDto>> getUserHits(UUID userId, int page, int perPage) {
+        long totalHits = repository.countByUser(userId);
+        boolean hasNextPage = totalHits > (long) page * perPage;
+        List<HitDto> hits = repository.getUserHits(userId, perPage, (page - 1) * perPage).stream()
                 .map(mapper::toDto)
                 .toList();
+
+        return new PaginationDto<>(totalHits, hasNextPage, hits);
     }
 
     @Transactional

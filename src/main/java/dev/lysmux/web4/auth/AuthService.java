@@ -83,7 +83,6 @@ public class AuthService {
 
         if (refreshToken == null || refreshToken.isRevoked()) {
             throw new InvalidTokenException("Invalid refresh token");
-
         }
 
         User user = User.builder()

@@ -19,6 +19,9 @@ public class TokenUtil {
     public static NewCookie clearRefreshCookie() {
         return new NewCookie.Builder(COOKIE_NAME)
                 .maxAge(0)
+                .path("/")
+                .httpOnly(true)
+                .sameSite(NewCookie.SameSite.LAX)
                 .build();
     }
 }

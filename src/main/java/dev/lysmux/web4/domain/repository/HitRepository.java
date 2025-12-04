@@ -12,7 +12,9 @@ public interface HitRepository {
 
     Hit getHit(UUID id);
 
-    List<Hit> getUserHits(UUID userId);
+    List<Hit> getUserHits(UUID userId, int limit, int offset);
 
     void clearUserHits(UUID userId);
+
+    long countByUser(UUID userId);
 }

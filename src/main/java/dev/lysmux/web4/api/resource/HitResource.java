@@ -3,11 +3,14 @@ package dev.lysmux.web4.api.resource;
 import dev.lysmux.web4.api.filter.Secured;
 import dev.lysmux.web4.api.schema.APIResponse;
 import dev.lysmux.web4.api.schema.HitCheckRequest;
+import dev.lysmux.web4.api.schema.Pagination;
 import dev.lysmux.web4.auth.UserPrincipal;
+import dev.lysmux.web4.dto.PaginationDto;
 import dev.lysmux.web4.dto.hit.HitDto;
 import dev.lysmux.web4.service.HitService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -25,8 +28,12 @@ public class HitResource {
 
     @GET
     @Path("/list")
-    public APIResponse getUserHits() {
-        List<HitDto> hits = hitService.getUserHits(user.getId());
+    public APIResponse getUserHits(@Valid @BeanParam Pagination pagination) {
+        PaginationDto<List<HitDto>> hits = hitService.getUserHits(
+                user.getId(),
+                pagination.page(),
+                pagination.perPage()
+        );
 
         return APIResponse.builder()
                 .data(hits)

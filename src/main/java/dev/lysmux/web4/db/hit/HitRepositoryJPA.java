@@ -37,8 +37,9 @@ public class HitRepositoryJPA implements PanacheRepository<HitEntity>, HitReposi
     }
 
     @Override
-    public List<Hit> getUserHits(UUID userId) {
-        return find("owner.id", userId).stream()
+    public List<Hit> getUserHits(UUID userId, int limit, int offset) {
+        return find("owner.id", userId)
+                .range(offset, offset + limit - 1).stream()
                 .map(mapper::fromEntity)
                 .toList();
     }
@@ -46,5 +47,10 @@ public class HitRepositoryJPA implements PanacheRepository<HitEntity>, HitReposi
     @Override
     public void clearUserHits(UUID userId) {
         delete("owner.id", userId);
+    }
+
+    @Override
+    public long countByUser(UUID userId) {
+        return count("owner.id", userId);
     }
 }

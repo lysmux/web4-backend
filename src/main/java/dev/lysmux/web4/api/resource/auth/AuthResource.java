@@ -54,7 +54,7 @@ public class AuthResource {
                 .build();
         return Response.ok()
                 .entity(response)
-                .cookie(TokenUtil.makeRefreshCookie(tokensPair.accessToken()))
+                .cookie(TokenUtil.makeRefreshCookie(tokensPair.refreshToken()))
                 .build();
     }
 
