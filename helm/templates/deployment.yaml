@@ -59,6 +59,13 @@ spec:
             - name: PG_DB
               value: {{ .Values.config.database.db }}
 
+            - name: REDIS_HOST
+              value: {{ .Values.config.redis.host }}
+            - name: REDIS_PORT
+              value: {{ .Values.config.redis.port | quote }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.config.redis.password }}
+
             - name: MAIL_HOST
               value: {{ .Values.config.mail.host }}
             - name: MAIL_PORT
@@ -70,8 +77,20 @@ spec:
             - name: MAIL_FROM
               value: {{ .Values.config.mail.from }}
 
+            - name: JWT_SECRET
+              value: {{ .Values.config.auth.jwtSecret }}
+            - name: APP_DOMAIN
+              value: {{ .Values.config.app.domain }}
+            - name: APP_ORIGIN
+              value: {{ .Values.config.app.origin }}
+
+            - name: VK_CLIENT_ID
+              value: {{ .Values.config.auth.vk.appId | quote }}
+            - name: VK_REDIRECT_URI
+              value: {{ .Values.config.auth.vk.redirectUri }}
+
             - name: APP_CONFIRMATION_LINK
-              value: {{ .Values.config.app_confirmation_link }}
+              value: {{ .Values.config.auth.confirmationLink }}
       {{- with .Values.volumes }}
       volumes:
         {{ toYaml . | nindent 8 }}

@@ -42,6 +42,10 @@ config:
     user: web4
     password:
     db: web4
+  redis:
+    host: redis-master.redis.svc.cluster.local
+    port: 6379
+    password:
 
   mail:
     host: mail.lysmux.dev
@@ -50,4 +54,14 @@ config:
     password:
     from: web@lysmux.dev
 
-  app_confirmation_link: https://web4.lysmux.dev/auth/confirmation/%s
+  auth:
+    jwtSecret:
+    confirmationLink: https://web4.lysmux.dev/auth/confirmation/%s
+
+    vk:
+      appId:
+      redirectUri: https://web4.lysmux.dev/auth/callback/vk
+
+  app:
+    domain: web4.lysmux.dev
+    origin: https://web4.lysmux.dev

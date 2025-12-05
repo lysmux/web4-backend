@@ -75,7 +75,10 @@ jobs:
             --kubeconfig kubeconfig.yaml \
             --set version=${{ inputs.tag }} \
             --set config.database.password=${{ secrets.PG_PASSWORD }} \
+            --set config.redis.password=${{ secrets.REDIS_PASSWORD }} \
             --set config.mail.password=${{ secrets.MAIL_PASSWORD }} \
+            --set config.auth.jwtSecret=${{ secrets.JWT_SECRET }} \
+            --set config.auth.vk.appId=${{ secrets.VK_APP_ID }} \
             --atomic \
             --wait \
             --timeout 5m

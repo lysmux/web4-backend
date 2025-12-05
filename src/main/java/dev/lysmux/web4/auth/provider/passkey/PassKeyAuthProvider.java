@@ -29,13 +29,13 @@ import java.util.UUID;
 @Slf4j
 @ApplicationScoped
 public class PassKeyAuthProvider {
-    @ConfigProperty(name = "auth.domain")
+    @ConfigProperty(name = "app.domain")
     String rpId;
 
     @ConfigProperty(name = "app.name")
     String rpName;
 
-    @ConfigProperty(name = "auth.origin")
+    @ConfigProperty(name = "app.origin")
     String origin;
 
     private static final JsonConverter jsonConverter = new ObjectConverter().getJsonConverter();
