@@ -1,6 +1,6 @@
 package dev.lysmux.web4.auth.provider.vk.model;
 
-public record VKCredentials(
+public record VKCallback(
         String code,
         String deviceId,
         String challengeVerifier

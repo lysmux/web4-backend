@@ -27,6 +27,7 @@ dependencies {
     implementation("io.quarkus:quarkus-mailer:3.30.0")
     implementation("io.quarkus:quarkus-hibernate-validator:3.30.0")
     implementation("io.quarkus:quarkus-micrometer-registry-prometheus")
+    implementation("io.quarkus:quarkus-redis-client:3.30.1")
 
     implementation("com.github.f4b6a3:uuid-creator:6.1.1")
     implementation("org.mapstruct:mapstruct:1.6.3")
@@ -38,6 +39,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
+
+    implementation("com.webauthn4j:webauthn4j-core:0.30.1.RELEASE")
 
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")

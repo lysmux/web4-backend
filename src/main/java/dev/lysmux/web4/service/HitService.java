@@ -41,7 +41,7 @@ public class HitService {
                 .y(y)
                 .r(r)
                 .hit(hit)
-                .executionTime(System.nanoTime() - startTime)
+                .executionTime((System.nanoTime() - startTime) / 1000)
                 .build();
         repository.addHit(result);
 

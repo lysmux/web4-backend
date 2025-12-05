@@ -1,4 +1,17 @@
 services:
+  redis:
+    container_name: redis
+    image: redis:8.4.0
+    ports:
+      - "6339:6379"
+
+    environment:
+      REDIS_PASSWORD: password
+
+    command: --requirepass ${REDIS_PASSWORD}
+    networks:
+      - storage
+
   database:
     container_name: postgres
     image: postgres:17

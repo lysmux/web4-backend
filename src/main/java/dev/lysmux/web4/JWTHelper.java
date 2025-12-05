@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -17,37 +17,43 @@ import java.util.Map;
 
 @ApplicationScoped
 public class JWTHelper {
-    private final SecretKey SECRET = Keys.hmacShaKeyFor("MySuperSecretKey32BytesExactly!!".getBytes(StandardCharsets.UTF_8));
-
-    private final JwtParser jwtParser = Jwts.parser()
-            .verifyWith(SECRET)
-            .build();
+    @ConfigProperty(name = "auth.jwt-secret")
+    String secret;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostConstruct
-    private void configureObjectMapper() {
+    void configureObjectMapper() {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
     public <T> String generateJWT(String subject, T data, long expirationMs) {
-        Map<String, Object> claims = objectMapper.convertValue(data, new TypeReference<>() {});
+        Map<String, Object> claims = objectMapper.convertValue(data, new TypeReference<>() {
+        });
 
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(SECRET)
+                .signWith(getSecretKey())
                 .compact();
     }
 
     public <T> JWTData<T> parseJWT(String jwt, Class<T> clazz) {
-        Claims claims = jwtParser.parseSignedClaims(jwt).getPayload();
+        Claims claims = Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(jwt).getPayload();
         T data = objectMapper.convertValue(claims, clazz);
 
         return new JWTData<>(claims.getSubject(), data);
     }
 
-    public record JWTData<T>(String subject, T data) {}
+    public record JWTData<T>(String subject, T data) {
+    }
 }

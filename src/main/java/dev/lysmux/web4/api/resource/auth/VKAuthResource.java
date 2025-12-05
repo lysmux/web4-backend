@@ -7,7 +7,7 @@ import dev.lysmux.web4.api.schema.auth.VKCallbackRequest;
 import dev.lysmux.web4.auth.AuthService;
 import dev.lysmux.web4.auth.model.TokensPair;
 import dev.lysmux.web4.auth.provider.vk.VKAuthProvider;
-import dev.lysmux.web4.auth.provider.vk.model.VKCredentials;
+import dev.lysmux.web4.auth.provider.vk.model.VKCallback;
 import dev.lysmux.web4.domain.model.User;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class VKAuthResource {
     @POST
     @Path("")
     public Response vkCallback(@Valid VKCallbackRequest request) {
-        User user = vkAuthProvider.register(new VKCredentials(
+        User user = vkAuthProvider.register(new VKCallback(
                 request.code(),
                 request.deviceId(),
                 request.challengeVerifier()

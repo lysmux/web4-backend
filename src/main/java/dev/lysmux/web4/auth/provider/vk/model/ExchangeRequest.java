@@ -1,20 +1,29 @@
 package dev.lysmux.web4.auth.provider.vk.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Value;
 
 @Builder
-@Data
+@Value
 public class ExchangeRequest {
     @Builder.Default
-    private String grant_type = "authorization_code";
-    @Builder.Default
-    private String client_id = "54324524";
-    @Builder.Default
-    private String redirect_uri = "https://tunnel.lysmux.dev/auth/callback/vk";
+    @JsonProperty("grant_type")
+    String grantType = "authorization_code";
 
-    private String code;
-    private String code_verifier;
-    private String device_id;
-    private String state;
+    @JsonProperty("client_id")
+    String clientId;
+
+    @JsonProperty("redirect_uri")
+    String redirectUri;
+
+    String code;
+
+    @JsonProperty("code_verifier")
+    String codeVerifier;
+
+    @JsonProperty("device_id")
+    String deviceId;
+
+    String state;
 }
